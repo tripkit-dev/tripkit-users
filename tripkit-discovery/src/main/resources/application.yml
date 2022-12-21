@@ -1,0 +1,12 @@
+server:
+  port: 8761 # server port
+
+spring:
+  application:
+    name: discovery # application name
+
+# Do not register as a client because it is a discovery server role
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
