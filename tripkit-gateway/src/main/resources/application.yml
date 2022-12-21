@@ -1,0 +1,47 @@
+server:
+  port: 8000
+
+# register gateway to Eureka server(discovery)
+eureka:
+  instance:
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: test-server-1
+          uri: lb://TEST-SERVER-1
+          predicates:
+            - Path=/test-server-1/**
+          filters:
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                message: Hi, there
+                showPreLogger: true
+                showPostLogger: true
+        - id: test-server-2
+          uri: lb://TEST-SERVER-2
+          predicates:
+            - Path=/test-server-2/**
+          filters:
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                message: TEST-SERVER-2
+                showPreLogger: true
+                showPostLogger: true
+      default-filters: #Registering the GlobalFilter I created with default-filters.(register A with B)
+        - name: GlobalFilter
+          args:
+            message: Spring Cloud Gateway GlobalFilter Message
+            showPreLogger: true
+            showPostLogger: true
