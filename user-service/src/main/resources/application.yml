@@ -7,16 +7,25 @@ server:
 spring:
   application:
     name: user-service
-    datasource:
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:testdb
-      username: sa
-      password: sa
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/MyUser?createDatabaseIfNotExist=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 1234
+    #initialization-mode: always
+  jpa:
+    generate-ddl: true
+    database: mysql
+    show-sql: true
+    hibernate:
+      #dialect : org.hibernate.dialect.MySQL8Dialect
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 
-token:
-  expiration_time: 864000000 
-  secret: user_token
-
+# register gateway to Eureka server(discovery)
 eureka:
   instance:
     instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
@@ -25,3 +34,10 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+greeting:
+  message: Welcome to the Simple E-Commerce(User Service).
+
+token:
+  expiration_time: 864000000
+  secret: user_token

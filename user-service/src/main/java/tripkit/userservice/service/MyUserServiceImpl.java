@@ -11,7 +11,12 @@ import tripkit.userservice.dto.MyUserDto;
 import tripkit.userservice.repository.MyUserRepository;
 import tripkit.userservice.util.Mapper;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static tripkit.userservice.util.Mapper.toObject;
 
 
 @Service
@@ -22,9 +27,36 @@ public class MyUserServiceImpl implements MyUserService{
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
+    public void createUser(MyUserDto userDto) {
+        userDto.setUserId(UUID.randomUUID().toString());
+        MyUser user = toObject(userDto, MyUser.class);
+        user.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    public MyUserDto getUserByUserId(String userId) {
+        MyUser savedUser = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        MyUserDto response = toObject(savedUser, MyUserDto.class);
+        return response;
+    }
+
+    @Override
     public MyUserDto getUserDetailsByEmail(String email) {
         MyUser savedUser = getMyUserByEmail(email);
-        return Mapper.toObject(savedUser, MyUserDto.class);
+        return toObject(savedUser, MyUserDto.class);
+    }
+
+    @Override
+    public List<MyUserDto> getAllUser() {
+        Iterable<MyUser> savedUsers = userRepository.findAll();
+        List<MyUserDto> response = new ArrayList<>();
+        savedUsers.forEach(user -> {
+            response.add(toObject(user, MyUserDto.class));
+        });
+        return response;
     }
 
     @Override
@@ -36,9 +68,9 @@ public class MyUserServiceImpl implements MyUserService{
         );
     }
 
-    private MyUser getMyUserByEmail(String email){
-        //TODO NULL일 때 처리해주기
-        return userRepository.findByEmail(email);
+    private MyUser getMyUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
 }
