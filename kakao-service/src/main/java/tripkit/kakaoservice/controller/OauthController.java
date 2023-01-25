@@ -17,10 +17,12 @@ import java.net.URL;
 @RequiredArgsConstructor
 public class OauthController {
 
+    //kauth.kakao.com/oauth/authorize?client_id=11d34b21b1bc851cacad71f51341a5f2&redirect_uri=http://13.125.57.161:8080/login/oauth/kakao&response_type=code
     //kauth.kakao.com/oauth/authorize?client_id=11d34b21b1bc851cacad71f51341a5f2&redirect_uri=http://localhost:8080/login/oauth/kakao&response_type=code
 
     private final UserService service;
     private final String REST_API_KEY ="11d34b21b1bc851cacad71f51341a5f2";
+    //private final String REDIRECT_URL ="http://13.125.57.161:8080/login/oauth/kakao";
     private final String REDIRECT_URL ="http://localhost:8080/login/oauth/kakao";
 
     String authCode; //인가 코드
